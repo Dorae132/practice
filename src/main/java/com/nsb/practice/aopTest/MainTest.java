@@ -11,6 +11,7 @@ public class MainTest implements Test {
 	@MyAround2
 	public void biz() {
 		System.out.println("-------------------biz-----------------------");
+		throw new RuntimeException("error");
 	}
 	
 	public static void main(String[] args) {
