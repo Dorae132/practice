@@ -10,8 +10,8 @@ public class MainTest implements Test {
 	@MyAround
 	@MyAround2
 	public void biz() {
-		System.out.println("-------------------biz-----------------------");
-		throw new RuntimeException("error");
+		System.out.println("-------------------biz start-----------------------");
+//		throw new RuntimeException("error");
 	}
 	
 	public static void main(String[] args) {

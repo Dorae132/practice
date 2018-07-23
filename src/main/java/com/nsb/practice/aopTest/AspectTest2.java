@@ -16,6 +16,7 @@ public class AspectTest2 {
 		System.out.println("want to send message");
 		joinPoint.proceed();
 		System.out.println("sending message");
-		System.out.println("send message end");
+		throw new RuntimeException("error");
+//		System.out.println("send message end");
 	}
 }
