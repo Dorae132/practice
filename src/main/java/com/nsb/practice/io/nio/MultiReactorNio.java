@@ -18,7 +18,7 @@ public class MultiReactorNio {
 		Selector selector = Selector.open();
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 		serverSocketChannel.configureBlocking(false);
-		serverSocketChannel.bind(new InetSocketAddress(1234));
+		serverSocketChannel.bind(new InetSocketAddress(8080));
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 		
 		int coreNum = Runtime.getRuntime().availableProcessors();

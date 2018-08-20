@@ -59,7 +59,9 @@ public class Processor {
 						} else if (count == 0) {
 							continue;
 						} else {
-							
+							System.out.println("server receive message: " + new String(byteBuffer.array()));
+							byteBuffer.clear();
+							socketChannel.write(byteBuffer.wrap("server has received the message".getBytes()));
 						}
 					}
 				}
