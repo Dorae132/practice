@@ -52,7 +52,7 @@ public class Floyd {
 				} else {
 					System.out.print(i + "到" + j + "之间路径为：" + i + "->");
 					ppath(path, i, j);
-					System.out.print("->" + j + "路径长度为：" + A[i][j] + "\n");
+					System.out.print(j + "路径长度为：" + A[i][j] + "\n");
 				}
 			}
 		}
@@ -64,7 +64,7 @@ public class Floyd {
 			return;
 		}
 		ppath(path, i, k);
-		System.out.print(k);
+		System.out.print(k + "->");
 		ppath(path, k, j);
 	}
 }
