@@ -10,6 +10,7 @@ public class Constants {
 	
 	public static int MAX = Integer.MAX_VALUE;
 	
+	// 带权无向图
 	public static int[][] GRAPH = new int[][] {
 		{ 0, 10, MAX, MAX, MAX, 11, MAX, MAX, MAX },
 		{ 10, 0, 18, MAX, MAX, MAX, 16, MAX, 12 },
@@ -21,7 +22,19 @@ public class Constants {
 		{ MAX, MAX, MAX, 16, 7, MAX, 19, 0, MAX },
 		{ MAX, 12, 8, 21, MAX, MAX, MAX, MAX, 0 } };
 
+	// 带权无向图边集合，有序
 	public static List<Edge> EDGES = Lists.newArrayList();
+	
+	// 带权有向图
+	public static int[][] DIRECTED_GRAPH = new int[][] {
+		{0, 4, 6, 6, MAX, MAX, MAX},
+		{MAX, 0, 1, MAX, 7, MAX, MAX},
+		{MAX, MAX, 0, MAX, 6, 4, MAX},
+		{MAX, MAX, 2, 0, MAX, 5, MAX},
+		{MAX, MAX, MAX, MAX, 0, MAX, 6},
+		{MAX, MAX, MAX, MAX, 1, 0, 8},
+		{MAX, MAX, MAX, MAX, MAX, MAX, 0}
+	};
 	
 	static {
 		for (int i = 0; i < GRAPH.length; i++) {
@@ -32,7 +45,6 @@ public class Constants {
 			}
 		}
 		Collections.sort(EDGES, new Comparator<Edge>() {
-
 			@Override
 			public int compare(Edge o1, Edge o2) {
 				if (o1.getWeight() == o2.getWeight()) {
