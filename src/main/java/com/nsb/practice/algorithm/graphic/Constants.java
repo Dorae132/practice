@@ -6,6 +6,11 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+/**
+ * constants
+ * @author Dorae
+ *
+ */
 public class Constants {
 	
 	public static int MAX = Integer.MAX_VALUE;
@@ -34,6 +39,16 @@ public class Constants {
 		{MAX, MAX, MAX, MAX, 0, MAX, 6},
 		{MAX, MAX, MAX, MAX, 1, 0, 8},
 		{MAX, MAX, MAX, MAX, MAX, MAX, 0}
+	};
+	
+	// 无权有向图邻接表
+	public static HeadNode[] DIRECTED_GRAPH_HEADS = new HeadNode[] {
+		new HeadNode(0, new TableNode(1, null), 0),
+		new HeadNode(1, new TableNode(2, null), 2),
+		new HeadNode(2, new TableNode(3, null), 1),
+		new HeadNode(3, null, 2),
+		new HeadNode(4, new TableNode(1, new TableNode(5, null)), 0),
+		new HeadNode(5, new TableNode(3, null), 1)
 	};
 	
 	static {
