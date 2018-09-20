@@ -43,12 +43,12 @@ public class Constants {
 	
 	// 无权有向图邻接表
 	public static HeadNode[] DIRECTED_GRAPH_HEADS = new HeadNode[] {
-		new HeadNode(0, new TableNode(1, null), 0),
-		new HeadNode(1, new TableNode(2, null), 2),
-		new HeadNode(2, new TableNode(3, null), 1),
-		new HeadNode(3, null, 2),
-		new HeadNode(4, new TableNode(1, new TableNode(5, null)), 0),
-		new HeadNode(5, new TableNode(3, null), 1)
+		new HeadNode(1, new TableNode(2, null), 0),
+		new HeadNode(2, new TableNode(3, null), 2),
+		new HeadNode(3, new TableNode(4, null), 1),
+		new HeadNode(4, null, 2),
+		new HeadNode(5, new TableNode(2, new TableNode(6, null)), 0),
+		new HeadNode(6, new TableNode(4, null), 1)
 	};
 	
 	static {

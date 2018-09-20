@@ -30,7 +30,7 @@ public class Topology {
 			System.out.print("<-" + headNode.getData());
 			nextNode = headNode.getFirstArc();
 			while (nextNode != null) {
-				node = headNodes[nextNode.getData()];
+				node = headNodes[nextNode.getData() - 1];
 				node.setInArcCount(node.getInArcCount() - 1);
 				if (node.getInArcCount() == 0) {
 					stack.push(node);
