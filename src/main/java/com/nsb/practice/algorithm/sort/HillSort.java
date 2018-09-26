@@ -1,4 +1,4 @@
-package com.nsb.practice.algorithm.find;
+package com.nsb.practice.algorithm.sort;
 
 /**
  * 希尔排序
