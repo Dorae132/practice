@@ -8,12 +8,9 @@ package com.nsb.practice.algorithm.find;
 public class DirectInsertSort {
 
 	public static void main(String[] args) {
-		int[] num = directInsertSort(Constants.INT_SEQ, 0, Constants.INT_SEQ.length - 1);
+		int[] num = directInsertSort(Constants.INT_SEQ, 9, Constants.INT_SEQ.length - 1);
 		for (int i : num) {
-			System.out.print(i);
-			if (i < num.length - 1) {
-				System.out.print(", ");
-			}
+			System.out.print(i + ", ");
 		}
 	}
 	
@@ -35,7 +32,7 @@ public class DirectInsertSort {
 					num[j + 1] = num[j];
 				}
 			}
-			j = j >= 0 ? j : 0;
+			j = j >= start ? j : start;
 			num[j] = tmp;
 		}
 		return num;
