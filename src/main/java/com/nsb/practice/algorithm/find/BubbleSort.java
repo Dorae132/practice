@@ -9,7 +9,7 @@ package com.nsb.practice.algorithm.find;
 public class BubbleSort {
 
 	public static void main(String[] args) {
-		int[] nums = bubbleSort(Constants.INT_SEQ, 0, Constants.INT_SEQ.length);
+		int[] nums = bubbleSort(Constants.INT_SEQ, 0, Constants.INT_SEQ.length - 1);
 		for (int i : nums) {
 			System.out.print(i + ", ");
 		}
