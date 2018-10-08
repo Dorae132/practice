@@ -51,6 +51,7 @@ public class Application {
 //			ByteBuffer allocate = ByteBuffer.allocate((int) file.getTotalSpace());
 //			int read = channel.read(allocate);
 //			byte[] copyToByteArray = allocate.array();
+			
 			FileOutputStream fileOutputStream = new FileOutputStream(new File("C:\\Users\\Dorae\\Desktop\\testme.pdf"));
 			FileCopyUtils.copy(copyToByteArray, fileOutputStream);
 		} catch (Exception e) {
