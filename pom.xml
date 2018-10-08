@@ -184,5 +184,26 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<!-- 子pom的resource会覆盖父pom内容 导致只有父pom生效-->
+		<!-- <resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>**/secret.key</exclude>
+					<exclude>**/tripartite_exclusive_contract.pdf</exclude>
+					<exclude>**/tripartite_non-exclusive_contract.pdf</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/secret.key</include>
+					<include>**/tripartite_exclusive_contract.pdf</include>
+					<include>**/tripartite_non-exclusive_contract.pdf</include>
+				</includes>
+			</resource>
+    	</resources> -->
 	</build>
 </project>
