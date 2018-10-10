@@ -3,25 +3,23 @@ package com.nsb.practice.algorithm.tree;
 import java.util.List;
 import java.util.Stack;
 
-import org.springframework.data.redis.listener.Topic;
-
 import com.google.common.collect.Lists;
 
 /**
- * 中序遍历
+ * 后续遍历
  * @author Dorae
  *
  * @param <T>
  */
-public class InorderTraversal<T> {
+public class SubsequentTraversal<T> {
 	
 	public List<T> result = Lists.newArrayList();
 	
 	public static void main(String[] args) {
-		InorderTraversal<Integer> inorderTraversal = new InorderTraversal<>();
-//		inorderTraversal.recursive(Constants.ROOT, inorderTraversal.result);
-		inorderTraversal.nonRecursive(Constants.ROOT, inorderTraversal.result);
-		System.out.println(inorderTraversal.result);
+		SubsequentTraversal<Integer> subsequentTraversal = new SubsequentTraversal<>();
+//		subsequentTraversal.recursive(Constants.ROOT, subsequentTraversal.result);
+		subsequentTraversal.nonRecursive(Constants.ROOT, subsequentTraversal.result);
+		System.out.println(subsequentTraversal.result);
 	}
 	
 	/**
@@ -34,8 +32,8 @@ public class InorderTraversal<T> {
 			return;
 		}
 		recursive(root.leftChild, result);
-		result.add(root.value);
 		recursive(root.rightChild, result);
+		result.add(root.value);
 		return;
 	}
 	/**
@@ -64,16 +62,11 @@ public class InorderTraversal<T> {
 					&& (tmp.leftChild == null || tmp.leftChild == lastPop)) {
 				// push right
 				stack.push(tmp.rightChild);
-				// visit top
-				result.add(tmp.value);
 			} else {
 				// pop
 				stack.pop();
 				lastPop = tmp;
-				if (tmp.rightChild == null) {
-					// visit right
-					result.add(tmp.value);
-				}
+				result.add(tmp.value);
 			}
 		}
 	}
