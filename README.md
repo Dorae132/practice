@@ -15,7 +15,7 @@
 
 ----
 
-## 基础算法
+## [基础算法](./src/main/java/com/nsb/practice/algorithm/)
 
 ### 图
 

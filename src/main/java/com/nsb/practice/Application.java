@@ -3,6 +3,7 @@ package com.nsb.practice;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ public class Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
+		ArrayList<Object> arrayList = new ArrayList<>();
 	}
 
 	@RequestMapping("/test")
