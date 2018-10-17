@@ -2,7 +2,7 @@
 .settings/
 *.classpath
 target/
-test/
+test*/
 test-output/
 .factorypath
 *.versionsBackup
