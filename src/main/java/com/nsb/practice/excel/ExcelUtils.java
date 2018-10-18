@@ -1,7 +1,10 @@
 package com.nsb.practice.excel;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +27,13 @@ import com.google.common.collect.Lists;
 public class ExcelUtils {
 
 	private static int ROW_ACCESS_WINDOWSIZE = 100;
-	
+
 	static class TestValue {
 		private String name;
 		private String age;
 		private String school;
 		private String clazz;
+
 		public TestValue(String name, String age, String school, String clazz) {
 			super();
 			this.name = name;
@@ -38,51 +42,110 @@ public class ExcelUtils {
 			this.clazz = clazz;
 		}
 	}
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
+
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "resource" })
 	public static void main(String[] args) throws Exception {
 		List<TitleToFieldObj> titleToFieldObjs = Lists.newArrayList(new TitleToFieldObj("姓名", "name"),
-				new TitleToFieldObj("年龄", "age"), new TitleToFieldObj("学校", "school"), new TitleToFieldObj("班级", "clazz"));
+				new TitleToFieldObj("年龄", "age"), new TitleToFieldObj("学校", "school"),
+				new TitleToFieldObj("班级", "clazz"));
 		List<TestValue> dataList = Lists.newArrayListWithCapacity(10000);
-		for(int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 5000; i++) {
 			dataList.add(new TestValue("张三" + i, "age: " + i, null, "clazz: " + i));
 		}
-		ExcelProperties<TestValue> excelProperties = new ExcelProperties("", titleToFieldObjs, dataList, "C:\\Users\\Dorae\\Desktop\\ttt\\", "", Lists.newArrayList(""));
+
 		long start = System.currentTimeMillis();
-		String excelExport = excelExport(excelProperties);
+		ExcelProperties<TestValue, File> properties = new ExcelProperties("", titleToFieldObjs, dataList,
+				"C:\\Users\\Dorae\\Desktop\\ttt\\", "test.xlsx", Lists.newArrayList(""), 0, 0, null);
+		excelExport(properties);
+		
+		InputStream inputStream = null;
+		OutputStream outputStream = null;
+		try {
+			File file = new File(
+					new StringBuilder(properties.getFilePath()).append(properties.getFileName()).toString());
+			inputStream = new FileInputStream(file);
+			XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream);
+			SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(xssfWorkbook, ROW_ACCESS_WINDOWSIZE);
+			Sheet sheet = sxssfWorkbook.getSheet(properties.getSheetName());
+			if (sheet == null) {
+				sheet = sxssfWorkbook.createSheet(properties.getSheetName());
+			}
+			outputStream = new FileOutputStream(file);
+
+			for (int i = 1; i < 5; i++) {
+				properties.setRowOffset(i * 5000);
+				fillContentRow(properties, sheet);
+			}
+			sxssfWorkbook.write(outputStream);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			inputStream.close();
+			outputStream.close();
+		}
 		System.out.println(System.currentTimeMillis() - start);
 	}
 
 	/**
-	 * 生成excel报表
-	 *
+	 * support the append strategy, but not rocommend, please focus on excelExportApend() 
 	 * @param properties
-	 *            传入参数
 	 * @return
+	 * @throws Exception
 	 */
-	public static String excelExport(ExcelProperties properties) throws Exception {
+	public static Object excelExport(ExcelProperties properties) throws Exception {
+		// 1.创建目录
 		validateFileDir(properties.getFilePath());
-		XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
-		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(xssfWorkbook, ROW_ACCESS_WINDOWSIZE);
-		Sheet sheet = sxssfWorkbook.createSheet(properties.getSheetName());
-		createHeadRow(properties.getTitleToFieldObjs(), sheet);
-		fillContentRow(properties, sheet);
 		File file = new File(new StringBuilder(properties.getFilePath()).append(properties.getFileName()).toString());
-		try (FileOutputStream outputStream = new FileOutputStream(file)) {
+		if (!file.exists()) {
+			try (FileOutputStream tmpOutPutStream = new FileOutputStream(file)) {
+				XSSFWorkbook tmpWorkBook = new XSSFWorkbook();
+				tmpWorkBook.write(tmpOutPutStream);
+			} catch (Exception e) {
+				throw e;
+			}
+		}
+		// 2.写入文件
+		FileOutputStream outputStream = null;
+		InputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(file);
+			XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream);
+			SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(xssfWorkbook, ROW_ACCESS_WINDOWSIZE);
+			Sheet sheet = sxssfWorkbook.getSheet(properties.getSheetName());
+			if (sheet == null) {
+				sheet = sxssfWorkbook.createSheet(properties.getSheetName());
+			}
+			createHeadRow(properties, sheet);
+			fillContentRow(properties, sheet);
+			outputStream = new FileOutputStream(file);
 			sxssfWorkbook.write(outputStream);
 		} catch (Exception e) {
 			throw e;
+		} finally {
+			if (outputStream != null) {
+				outputStream.close();
+			}
+			if (inputStream != null) {
+				inputStream.close();
+			}
 		}
-		return uploadFile(file);
+		// 3.处理结果
+		if (properties.getProcessor() != null) {
+			return properties.getProcessor().process(file);
+		} else {
+			return file;
+		}
 	}
 
 	/**
-	 * 上传文件
-	 * @param file
-	 * @return
+	 * append mode
+	 * @param properties
+	 * @param sheet
+	 * @throws Exception
 	 */
-	private static String uploadFile(File file) {
-		// TODO Auto-generated method stub
-		return null;
+	public static void excelExportApend(ExcelProperties properties, Sheet sheet) throws Exception {
+		createHeadRow(properties, sheet);
+		fillContentRow(properties, sheet);
 	}
 
 	/**
@@ -94,13 +157,13 @@ public class ExcelUtils {
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */
-	private static void fillContentRow(ExcelProperties<?> excelProperties, Sheet sheet) throws Exception {
+	private static void fillContentRow(ExcelProperties<?, ?> excelProperties, Sheet sheet) throws Exception {
 		if (CollectionUtils.isEmpty(excelProperties.getDataList())) {
 			return;
 		}
 		List<Field> fields = excelProperties.getFields();
 		Map<String, Field> fieldNameMap = excelProperties.getFieldNameMap();
-		int row = 1;
+		int row = 1 + excelProperties.getRowOffset();
 		for (Object object : excelProperties.getDataList()) {
 			int col = 0;
 			Row createRow = sheet.createRow(row);
@@ -132,7 +195,12 @@ public class ExcelUtils {
 	 * @param titleMap
 	 *            对象属性名称->表头显示名称
 	 */
-	private static void createHeadRow(List<TitleToFieldObj> titleToFieldObjs, Sheet sheet) {
+	private static void createHeadRow(ExcelProperties properties, Sheet sheet) {
+		List<TitleToFieldObj> titleToFieldObjs = properties.getTitleToFieldObjs();
+		// 偏移不为0
+		if (properties.getRowOffset() != 0) {
+			return;
+		}
 		Row headRow = sheet.createRow(0);
 		int i = 0;
 		for (TitleToFieldObj titleToFieldObj : titleToFieldObjs) {

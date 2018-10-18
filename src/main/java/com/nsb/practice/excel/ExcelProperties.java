@@ -17,9 +17,10 @@ import com.google.common.collect.Lists;
  * 
  * @author Dorae
  *
- * @param <T>
+ * @param <T> the data type
+ * @param <R> the type of the return value that excepted
  */
-public class ExcelProperties<T> {
+public class ExcelProperties<T, R> {
 	
 	// sheet名称和表头值
 	private String sheetName = "sheet1";
@@ -45,8 +46,28 @@ public class ExcelProperties<T> {
 	// 文件名
 	private String fileName = UUID.randomUUID() + ".xlsx";
 
+	// 行偏移
+	private int rowOffset = 0;
+
+	// 列偏移
+	private int colOffset = 0;
+	
+	private ExcelProcessor<R> processor;
+	
+	/**
+	 * 
+	 * @param sheetName
+	 * @param titleToFieldObjs 表头与字段的对应关系
+	 * @param dataList 数据集
+	 * @param filePath 文件路径（默认./liveunionExcels/）
+	 * @param fileName 文件名（默认随机）
+	 * @param excludeFields 要排除的字段名
+	 * @param rowOffset 行偏移
+	 * @param colOffset 列偏移
+	 * @throws Exception
+	 */
 	public ExcelProperties(String sheetName, List<TitleToFieldObj> titleToFieldObjs, List<T> dataList, String filePath,
-			String fileName, List<String> excludeFields) throws Exception {
+			String fileName, List<String> excludeFields, int rowOffset, int colOffset, ExcelProcessor processor) throws Exception {
 		super();
 		if (StringUtils.isNotBlank(sheetName)) {
 			this.sheetName = sheetName;
@@ -59,6 +80,8 @@ public class ExcelProperties<T> {
 		if (StringUtils.isNotBlank(fileName)) {
 			this.fileName = fileName;
 		}
+		this.rowOffset = rowOffset;
+		this.colOffset = colOffset;
 		this.titleFieldMap = titleToFieldObjs.stream()
 				.collect(Collectors.toMap(TitleToFieldObj :: getTitle, TitleToFieldObj :: getFieldName));
 		Field field = ExcelProperties.class.getDeclaredField("dataList");
@@ -74,6 +97,31 @@ public class ExcelProperties<T> {
 			}
 			this.fieldNameMap = Stream.of(declaredFields).collect(Collectors.toMap(Field :: getName, e -> e));
 		}
+		this.processor = processor;
+	}
+	
+	public ExcelProcessor<R> getProcessor() {
+		return processor;
+	}
+
+	public void setProcessor(ExcelProcessor<R> processor) {
+		this.processor = processor;
+	}
+
+	public int getRowOffset() {
+		return rowOffset;
+	}
+
+	public void setRowOffset(int rowOffset) {
+		this.rowOffset = rowOffset;
+	}
+
+	public int getColOffset() {
+		return colOffset;
+	}
+
+	public void setColOffset(int colOffset) {
+		this.colOffset = colOffset;
 	}
 
 	public List<Field> getFields() {
