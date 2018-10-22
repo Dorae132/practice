@@ -1,6 +1,8 @@
 package com.nsb.practice.excel;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -11,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * preperties if the excel which would to be extported
@@ -24,12 +27,9 @@ public class ExcelProperties<T, R> {
 	
 	// sheet名称和表头值
 	private String sheetName = "sheet1";
-	
-	// 表头信息
-	private List<TitleToFieldObj> titleToFieldObjs;
 
-	// 表头map
-	private Map<String, String> titleFieldMap;
+	// 表头List
+	private List<String> titles;
 	
 	// 对象集合
 	private List<T> dataList;
@@ -42,17 +42,33 @@ public class ExcelProperties<T, R> {
 	
 	// 文件地址
 	private String filePath = "./liveunionExcels/";
-	
+
 	// 文件名
-	private String fileName = UUID.randomUUID() + ".xlsx";
+	private String fileName = new StringBuilder(UUID.randomUUID().toString()).append(".xlsx").toString().replace("-", "");
 
 	// 行偏移
 	private int rowOffset = 0;
 
 	// 列偏移
 	private int colOffset = 0;
+
+	private IExcelProcessor<R> processor;
+
+	private AbstractDataSupplier<T> dataSupplier;
 	
-	private ExcelProcessor<R> processor;
+	private Class dataClazz;
+	
+	public static ExcelProperties produceCommonProperties(String sheetName, List<?> dataList, String filePath,
+			String fileName, int colOffset, IExcelProcessor<?> processor, Class dataClazz) throws Exception {
+		return new ExcelProperties<>(sheetName, dataList, filePath, fileName, 0, colOffset, processor, null, dataClazz);
+	}
+	
+	public static ExcelProperties produceAppendProperties(String sheetName, String filePath, String fileName,
+			int colOffset, IExcelProcessor<?> processor, AbstractDataSupplier<?> dataSupplier, Class dataClazz)
+			throws Exception {
+		return new ExcelProperties<>(sheetName, null, filePath, fileName, 0, colOffset, processor, dataSupplier,
+				dataClazz);
+	}
 	
 	/**
 	 * 
@@ -64,64 +80,103 @@ public class ExcelProperties<T, R> {
 	 * @param excludeFields 要排除的字段名
 	 * @param rowOffset 行偏移
 	 * @param colOffset 列偏移
+	 * @param processor 结果processor
+	 * @param dataSupplier 数据源
+	 * @param dataClazz 资源类型
 	 * @throws Exception
 	 */
-	public ExcelProperties(String sheetName, List<TitleToFieldObj> titleToFieldObjs, List<T> dataList, String filePath,
-			String fileName, List<String> excludeFields, int rowOffset, int colOffset, ExcelProcessor processor) throws Exception {
+	@SuppressWarnings("unchecked")
+	private ExcelProperties(String sheetName, List<T> dataList, String filePath,
+			String fileName, int rowOffset, int colOffset, IExcelProcessor<R> processor,
+			AbstractDataSupplier<T> dataSupplier, Class dataClazz) throws Exception {
 		super();
+		// 1.check
+		if (CollectionUtils.isEmpty(dataList) && dataClazz == null) {
+			// 保障能获取到资源类型
+			throw new RuntimeException("dataList和资源数据类型不能同时为空！");
+		}
+		// 2.ordinary field
 		if (StringUtils.isNotBlank(sheetName)) {
 			this.sheetName = sheetName;
 		}
-		this.titleToFieldObjs = titleToFieldObjs;
 		this.dataList = dataList;
 		if (StringUtils.isNotBlank(filePath)) {
 			this.filePath = filePath;
 		}
 		if (StringUtils.isNotBlank(fileName)) {
-			this.fileName = fileName;
+			int sufixIndex = fileName.lastIndexOf(".");
+			sufixIndex = sufixIndex == -1 ? fileName.length() : sufixIndex;
+			this.fileName = new StringBuilder(fileName)
+					.insert(sufixIndex, "_" + UUID.randomUUID().toString().replace("-", "")).toString();
 		}
 		this.rowOffset = rowOffset;
 		this.colOffset = colOffset;
-		this.titleFieldMap = titleToFieldObjs.stream()
-				.collect(Collectors.toMap(TitleToFieldObj :: getTitle, TitleToFieldObj :: getFieldName));
-		Field field = ExcelProperties.class.getDeclaredField("dataList");
-		if (!CollectionUtils.isEmpty(dataList)) {
-			Field[] declaredFields = dataList.get(0).getClass().getDeclaredFields();
-			this.fields = Lists.newArrayList(declaredFields);
-			if (!CollectionUtils.isEmpty(excludeFields)) {
-				for (Field field2 : declaredFields) {
-					if (excludeFields.contains(field2.getName())) {
-						fields.remove(field2);
+		this.processor = processor;
+		this.dataSupplier = dataSupplier;
+		// 3.special field
+		this.dataClazz = dataClazz == null ? dataList.get(0).getClass() : dataClazz;
+		Field[] declaredFields = this.dataClazz.getDeclaredFields();
+		Arrays.sort(declaredFields, new Comparator<Field>() {
+
+			@Override
+			public int compare(Field o1, Field o2) {
+				ExcelCol o1Annotation = o1.getAnnotation(ExcelCol.class);
+				ExcelCol o2Annotation = o2.getAnnotation(ExcelCol.class);
+				if (o1Annotation == null && o2Annotation == null) {
+					return 0;
+				} else if (o1Annotation != null
+						&& o2Annotation != null) {
+					if (o1Annotation.order() == o2Annotation.order()) {
+						return 0;
+					} else {
+						return o1Annotation.order() > o2Annotation.order() ? 1 : -1;
 					}
+				} else if (o1Annotation != null
+						&& o2Annotation == null) {
+					return 1;
+				} else {
+					return -1;
 				}
 			}
-			this.fieldNameMap = Stream.of(declaredFields).collect(Collectors.toMap(Field :: getName, e -> e));
+		});
+		this.fields = Lists.newArrayListWithCapacity(declaredFields.length);
+		this.fieldNameMap = Maps.newHashMapWithExpectedSize(declaredFields.length);
+		this.titles = Lists.newArrayListWithCapacity(declaredFields.length);
+		for (Field declaredField : declaredFields) {
+			ExcelCol excelCol = declaredField.getAnnotation(ExcelCol.class);
+			if (excelCol == null) {
+				continue;
+			}
+			this.fieldNameMap.put(declaredField.getName(), declaredField);
+			titles.add(excelCol.title());
+			this.fields.add(declaredField);
 		}
-		this.processor = processor;
-	}
-	
-	public ExcelProcessor<R> getProcessor() {
-		return processor;
+		this.fieldNameMap = Stream.of(declaredFields).collect(Collectors.toMap(Field::getName, e -> e));
+		
 	}
 
-	public void setProcessor(ExcelProcessor<R> processor) {
-		this.processor = processor;
+	public String getSheetName() {
+		return sheetName;
 	}
 
-	public int getRowOffset() {
-		return rowOffset;
+	public void setSheetName(String sheetName) {
+		this.sheetName = sheetName;
 	}
 
-	public void setRowOffset(int rowOffset) {
-		this.rowOffset = rowOffset;
+	public List<String> getTitles() {
+		return titles;
 	}
 
-	public int getColOffset() {
-		return colOffset;
+	public void setTitles(List<String> titles) {
+		this.titles = titles;
 	}
 
-	public void setColOffset(int colOffset) {
-		this.colOffset = colOffset;
+	public List<T> getDataList() {
+		return dataList;
+	}
+
+	public void setDataList(List<T> dataList) {
+		this.dataList = dataList;
 	}
 
 	public List<Field> getFields() {
@@ -140,14 +195,6 @@ public class ExcelProperties<T, R> {
 		this.fieldNameMap = fieldNameMap;
 	}
 
-	public Map<String, String> getTitleFieldMap() {
-		return titleFieldMap;
-	}
-
-	public void setTitleFieldMap(Map<String, String> titleFieldMap) {
-		this.titleFieldMap = titleFieldMap;
-	}
-
 	public String getFilePath() {
 		return filePath;
 	}
@@ -164,27 +211,43 @@ public class ExcelProperties<T, R> {
 		this.fileName = fileName;
 	}
 
-	public String getSheetName() {
-		return sheetName;
+	public int getRowOffset() {
+		return rowOffset;
 	}
 
-	public void setSheetName(String sheetName) {
-		this.sheetName = sheetName;
+	public void setRowOffset(int rowOffset) {
+		this.rowOffset = rowOffset;
 	}
 
-	public List<TitleToFieldObj> getTitleToFieldObjs() {
-		return titleToFieldObjs;
+	public int getColOffset() {
+		return colOffset;
 	}
 
-	public void setTitleToFieldObjs(List<TitleToFieldObj> titleToFieldObjs) {
-		this.titleToFieldObjs = titleToFieldObjs;
+	public void setColOffset(int colOffset) {
+		this.colOffset = colOffset;
 	}
 
-	public List<T> getDataList() {
-		return dataList;
+	public IExcelProcessor<R> getProcessor() {
+		return processor;
 	}
 
-	public void setDataList(List<T> dataList) {
-		this.dataList = dataList;
+	public void setProcessor(IExcelProcessor<R> processor) {
+		this.processor = processor;
+	}
+
+	public AbstractDataSupplier<T> getDataSupplier() {
+		return dataSupplier;
+	}
+
+	public void setDataSupplier(AbstractDataSupplier<T> dataSupplier) {
+		this.dataSupplier = dataSupplier;
+	}
+
+	public Class getDataClazz() {
+		return dataClazz;
+	}
+
+	public void setDataClazz(Class dataClazz) {
+		this.dataClazz = dataClazz;
 	}
 }

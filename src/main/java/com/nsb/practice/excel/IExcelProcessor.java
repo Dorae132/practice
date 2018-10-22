@@ -6,8 +6,9 @@ import java.io.File;
  * process the file that has been created
  * @author Dorae
  *
+ * @param <T>
  */
 @FunctionalInterface
-public interface ExcelProcessor<T> {
+public interface IExcelProcessor <T> {
 	public T process(File file);
 }
