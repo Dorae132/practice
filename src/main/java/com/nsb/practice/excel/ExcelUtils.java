@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.data.util.Pair;
 
 import com.google.common.collect.Lists;
 
@@ -21,7 +20,7 @@ import com.google.common.collect.Lists;
  */
 public class ExcelUtils {
 
-	private static int ROW_ACCESS_WINDOWSIZE = 100;
+//	private static int ROW_ACCESS_WINDOWSIZE = 100;
 
 	static class TestValue {
 		@ExcelCol(title = "姓名")
@@ -50,20 +49,20 @@ public class ExcelUtils {
 		}
 
 		long start = System.currentTimeMillis();
-		ExcelProperties<TestValue, File> properties = ExcelProperties.produceCommonProperties("", dataList,
-				"C:\\Users\\Dorae\\Desktop\\ttt\\", "testxlsx", 0, null, null);
-//		ExcelProperties<TestValue, File> properties = ExcelProperties.produceAppendProperties("",
-//				"C:\\Users\\Dorae\\Desktop\\ttt\\", null, 0, null, new AbstractDataSupplier<TestValue>() {
-//					private int i = 0;
-//
-//					@Override
-//					public Pair<List<TestValue>, Boolean> getDatas() {
-//						boolean hasNext = i < 10;
-//						i++;
-//						return Pair.of(dataList, hasNext);
-//					}
-//				}, TestValue.class);
-		File file = (File) excelExport(properties, FillSheetModeEnums.COMMON_MODE);
+//		ExcelProperties<TestValue, File> properties = ExcelProperties.produceCommonProperties("", dataList,
+//				"C:\\Users\\Dorae\\Desktop\\ttt\\", "testxlsx", 0, null, 0, null);
+		ExcelProperties<TestValue, File> properties = ExcelProperties.produceAppendProperties("",
+				"C:\\Users\\Dorae\\Desktop\\ttt\\", null, 0, TestValue.class, 0, null, new AbstractDataSupplier<TestValue>() {
+					private int i = 0;
+
+					@Override
+					public Pair<List<TestValue>, Boolean> getDatas() {
+						boolean hasNext = i < 10;
+						i++;
+						return Pair.of(dataList, hasNext);
+					}
+				});
+		File file = (File) excelExport(properties, FillSheetModeEnums.COMMON_MODE.getValue());
 		System.out.println(System.currentTimeMillis() - start);
 	}
 	
@@ -73,7 +72,7 @@ public class ExcelUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	private static Object excelExport(ExcelProperties properties, FillSheetModeEnums fillSheetMode) throws Exception {
+	public static Object excelExport(ExcelProperties properties, IFillSheet iFillSheet) throws Exception {
 		// 1.创建目录
 		validateFileDir(properties.getFilePath());
 		File file = new File(new StringBuilder(properties.getFilePath()).append(properties.getFileName()).toString());
@@ -91,12 +90,12 @@ public class ExcelUtils {
 		try {
 			inputStream = new FileInputStream(file);
 			XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream);
-			SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(xssfWorkbook, ROW_ACCESS_WINDOWSIZE);
+			SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(xssfWorkbook, properties.getRowAccessWindowsize());
 			Sheet sheet = sxssfWorkbook.getSheet(properties.getSheetName());
 			if (sheet == null) {
 				sheet = sxssfWorkbook.createSheet(properties.getSheetName());
 			}
-			fillSheetMode.getValue().fill(properties, sheet);
+			iFillSheet.fill(properties, sheet);
 			outputStream = new FileOutputStream(file);
 			sxssfWorkbook.write(outputStream);
 		} catch (Exception e) {

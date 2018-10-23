@@ -20,14 +20,12 @@ public class DeSerializable {
 		Method method = DeSerializable.class.getMethod("test");
 		Type returnType = method.getGenericReturnType();
 		System.out.println(returnType.getTypeName());
-		System.err.println("--------------------------------------------");
 		if (returnType instanceof ParameterizedType) {
 			Type[] types = ((ParameterizedType) returnType).getActualTypeArguments();
 			for (Type type : types) {
 				System.out.println("泛型类型: " + type);
 			}
 		}
-//		System.err.println("--------------------------------------------");
 		String jsonStr = "[[{\"value\":\"123\"}]]";
 		JavaType javaType = createJavaTypeFromType(returnType);
 		List<Generic> result = objectMapper.readValue(jsonStr, javaType);

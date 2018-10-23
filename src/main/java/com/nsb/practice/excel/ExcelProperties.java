@@ -9,8 +9,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -52,6 +52,9 @@ public class ExcelProperties<T, R> {
 	// 列偏移
 	private int colOffset = 0;
 
+	// 缓冲
+	private int rowAccessWindowsize = 100;
+	
 	private IExcelProcessor<R> processor;
 
 	private AbstractDataSupplier<T> dataSupplier;
@@ -59,15 +62,14 @@ public class ExcelProperties<T, R> {
 	private Class dataClazz;
 	
 	public static ExcelProperties produceCommonProperties(String sheetName, List<?> dataList, String filePath,
-			String fileName, int colOffset, IExcelProcessor<?> processor, Class dataClazz) throws Exception {
-		return new ExcelProperties<>(sheetName, dataList, filePath, fileName, 0, colOffset, processor, null, dataClazz);
+			String fileName, int colOffset, Class dataClazz, int rowAccessWindowsize, IExcelProcessor<?> processor) throws Exception {
+		return new ExcelProperties<>(sheetName, dataList, filePath, fileName, 0, colOffset, dataClazz, rowAccessWindowsize, processor, null);
 	}
 	
 	public static ExcelProperties produceAppendProperties(String sheetName, String filePath, String fileName,
-			int colOffset, IExcelProcessor<?> processor, AbstractDataSupplier<?> dataSupplier, Class dataClazz)
+			int colOffset, Class dataClazz, int rowAccessWindowsize, IExcelProcessor<?> processor, AbstractDataSupplier<?> dataSupplier)
 			throws Exception {
-		return new ExcelProperties<>(sheetName, null, filePath, fileName, 0, colOffset, processor, dataSupplier,
-				dataClazz);
+		return new ExcelProperties<>(sheetName, null, filePath, fileName, 0, colOffset, dataClazz, rowAccessWindowsize, processor, dataSupplier);
 	}
 	
 	/**
@@ -83,19 +85,20 @@ public class ExcelProperties<T, R> {
 	 * @param processor 结果processor
 	 * @param dataSupplier 数据源
 	 * @param dataClazz 资源类型
+	 * @param rowAccessWindowsize 缓冲大小
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private ExcelProperties(String sheetName, List<T> dataList, String filePath,
-			String fileName, int rowOffset, int colOffset, IExcelProcessor<R> processor,
-			AbstractDataSupplier<T> dataSupplier, Class dataClazz) throws Exception {
+	private ExcelProperties(String sheetName, List<T> dataList, String filePath, String fileName, int rowOffset,
+			int colOffset, Class dataClazz, int rowAccessWindowsize, IExcelProcessor<R> processor,
+			AbstractDataSupplier<T> dataSupplier) throws Exception {
 		super();
 		// 1.check
 		if (CollectionUtils.isEmpty(dataList) && dataClazz == null) {
 			// 保障能获取到资源类型
 			throw new RuntimeException("dataList和资源数据类型不能同时为空！");
 		}
-		// 2.ordinary field
+		// 2.common field
 		if (StringUtils.isNotBlank(sheetName)) {
 			this.sheetName = sheetName;
 		}
@@ -113,6 +116,7 @@ public class ExcelProperties<T, R> {
 		this.colOffset = colOffset;
 		this.processor = processor;
 		this.dataSupplier = dataSupplier;
+		this.rowAccessWindowsize = (rowAccessWindowsize > 100 ? rowAccessWindowsize : 100);
 		// 3.special field
 		this.dataClazz = dataClazz == null ? dataList.get(0).getClass() : dataClazz;
 		Field[] declaredFields = this.dataClazz.getDeclaredFields();
@@ -153,6 +157,14 @@ public class ExcelProperties<T, R> {
 		}
 		this.fieldNameMap = Stream.of(declaredFields).collect(Collectors.toMap(Field::getName, e -> e));
 		
+	}
+
+	public int getRowAccessWindowsize() {
+		return rowAccessWindowsize;
+	}
+
+	public void setRowAccessWindowsize(int rowAccessWindowsize) {
+		this.rowAccessWindowsize = rowAccessWindowsize;
 	}
 
 	public String getSheetName() {
