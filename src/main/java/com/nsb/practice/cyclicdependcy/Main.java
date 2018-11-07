@@ -1,10 +1,5 @@
 package com.nsb.practice.cyclicdependcy;
 
-import java.lang.reflect.Method;
-
-import org.springframework.cglib.proxy.Enhancer;
-import org.springframework.cglib.proxy.MethodInterceptor;
-import org.springframework.cglib.proxy.MethodProxy;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Main {

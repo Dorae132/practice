@@ -1,7 +1,5 @@
 package com.nsb.practice.cyclicdependcy;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 public class BeanA {
 
 //	@Autowired
