@@ -1,4 +1,4 @@
-package com.nsb.practice.excel;
+package com.nsb.practice.easy.excel;
 
 import java.lang.reflect.Field;
 import java.util.List;

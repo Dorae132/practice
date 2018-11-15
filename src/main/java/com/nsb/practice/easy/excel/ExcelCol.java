@@ -1,4 +1,4 @@
-package com.nsb.practice.excel;
+package com.nsb.practice.easy.excel;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

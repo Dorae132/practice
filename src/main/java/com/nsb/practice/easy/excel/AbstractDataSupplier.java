@@ -1,4 +1,4 @@
-package com.nsb.practice.excel;
+package com.nsb.practice.easy.excel;
 
 import java.util.List;
 
