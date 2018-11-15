@@ -13,6 +13,6 @@
 	<bean id = "beanA" class = "com.nsb.practice.cyclicdependcy.BeanA">
 		<constructor-arg ref = "beanB"/>
 	</bean>
-	
+	<bean id = "beanInitA" class = "com.nsb.practice.cyclicdependcy.BeanInitA" init-method="initMethod"/>
 	
 </beans>
