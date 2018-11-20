@@ -1,4 +1,4 @@
-package com.nsb.practice.cyclicdependcy;
+package com.nsb.practice.spring.cyclicdependcy;
 
 public class BeanA {
 
