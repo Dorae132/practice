@@ -48,7 +48,7 @@ public class RxJavaTest {
 //					}
 //				});
 		Scheduler newThread = Schedulers.newThread();
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 1000; i++) {
 		Observable.create(new ObservableOnSubscribe<String>() {
 
 			@Override
@@ -74,7 +74,15 @@ public class RxJavaTest {
 
 			@Override
 			public void onNext(@NonNull String o) {
-				System.out.println("#观察者线程：" + Thread.currentThread().getName());
+				while (true) {
+					System.out.println("#观察者线程：" + Thread.currentThread().getName());
+				}
+//				try {
+//					TimeUnit.SECONDS.sleep(10);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 //				System.out.println("观察者 onNext: " + o);
 			}
 
