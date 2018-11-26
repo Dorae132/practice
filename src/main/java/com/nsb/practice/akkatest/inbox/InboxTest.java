@@ -1,4 +1,4 @@
-package com.nsb.practice.akkatest;
+package com.nsb.practice.akkatest.inbox;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;

@@ -23,7 +23,8 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
 		<rxjava.version>2.2.2</rxjava.version>
-		<akka.version>2.4.3</akka.version>
+		<akka.version>2.4.16</akka.version>
+		<akka.transactor.version>2.3.16</akka.transactor.version>
 	</properties>
 
 	<dependencies>
@@ -226,6 +227,16 @@
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-slf4j_2.11</artifactId>
 			<version>${akka.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-agent_2.11</artifactId>
+			<version>${akka.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-transactor_2.11</artifactId>
+			<version>${akka.transactor.version}</version>
 		</dependency>
 	</dependencies>
 
