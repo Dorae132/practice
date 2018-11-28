@@ -6,6 +6,6 @@ public class Main {
 		BookFacadeProxy proxy = new BookFacadeProxy();
 		BookFacade bookfacade = (BookFacade) proxy.bind(bookFacadeImpl);
 		bookfacade.addBook();
-		bookfacade.deleteBook();
+//		bookfacade.deleteBook();
 	}
 }
