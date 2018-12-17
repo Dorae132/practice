@@ -62,7 +62,7 @@ public class RxJavaTest {
 			}
 		})
 //		.subscribeOn(newThread)
-//		.subscribeOn(newThread)
+		.subscribeOn(newThread)
 		.filter(e -> e.equals("nsb"))
 //		.map(e -> "MAP2: " + e)
 //		.subscribeOn(newThread)
@@ -74,16 +74,16 @@ public class RxJavaTest {
 
 			@Override
 			public void onNext(@NonNull String o) {
-				while (true) {
-					System.out.println("#观察者线程：" + Thread.currentThread().getName());
-				}
+//				while (true) {
+//					System.out.println("#观察者线程：" + Thread.currentThread().getName());
+//				}
 //				try {
 //					TimeUnit.SECONDS.sleep(10);
 //				} catch (InterruptedException e) {
 //					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
-//				System.out.println("观察者 onNext: " + o);
+				System.out.println("观察者 onNext: " + o);
 			}
 
 			@Override
