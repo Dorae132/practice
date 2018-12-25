@@ -40,7 +40,7 @@ public class Dijkstra {
 		for (int i = 1; i < n; i++) {
 			minDist = Constants.MAX;
 			// 3 选出不在s中，且具有最小距离的顶点u
-			for (int j = 1; j < n; j++) {
+			for (int j = 0; j < n; j++) {
 				if (!s[j] && dist[j] < minDist) {
 					u = j;
 					minDist = dist[j];
@@ -49,7 +49,7 @@ public class Dijkstra {
 			// 顶点u加入s
 			s[u] = true;
 			// 4 修改不在s中的顶点距离
-			for (int j = 1; j < n; j++) {
+			for (int j = 0; j < n; j++) {
 				if (!s[j] && graph[u][j] < Constants.MAX && dist[u] + graph[u][j] < dist[j]) {
 					dist[j] = dist[u] + graph[u][j];
 					path[j] = u;

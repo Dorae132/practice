@@ -31,6 +31,7 @@ public class Kruskal {
 				// 选中边
 				System.out.println(edge.getV1() + ", " + edge.getV2() + " 权重：" + edge.getWeight());
 				k++;
+				// 合并
 				for (int i = 0; i < n; i++) {
 					if (vset[i] == vset[edge.getV2()]) {
 						vset[i] = vset[edge.getV1()];

@@ -17,7 +17,7 @@
 		<java.version>1.8</java.version>
 		<spring-boot.version>1.5.2.RELEASE</spring-boot.version>
 		<apache.commons.lang3.version>3.6</apache.commons.lang3.version>
-		<guava.version>18.0</guava.version>
+		<guava.version>26.0-jre</guava.version>
 		<slf4j.version>1.7.6</slf4j.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -25,9 +25,16 @@
 		<rxjava.version>2.2.2</rxjava.version>
 		<akka.version>2.4.16</akka.version>
 		<akka.transactor.version>2.3.16</akka.transactor.version>
+		<lombook.version>1.18.2</lombook.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombook.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>

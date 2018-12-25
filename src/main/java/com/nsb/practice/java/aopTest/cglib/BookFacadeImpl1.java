@@ -6,6 +6,7 @@ public class BookFacadeImpl1 {
 	}
 	
 	public void selfAdd() {
+	    System.out.println("selfADD");
 		this.addBook();
 	}
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Controller
 @SpringBootApplication
 @RestController
+//@EnableAspectJAutoProxy(exposeProxy = true)
 public class Application {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);

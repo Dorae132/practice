@@ -28,7 +28,7 @@ public class DirectInsertSort {
 			// 找出tmp的位置
 			for (j = i-1; j >= start; j--) {
 				if (num[j] > tmp) {
-					// 后移>j的元素
+					// 后移>tmp的元素
 					num[j + 1] = num[j];
 				}
 			}
