@@ -9,10 +9,9 @@
 
 	<context:component-scan base-package="com.nsb.practice.cyclicdependcy" />
 	
-	<bean id = "beanB" class = "com.nsb.practice.cyclicdependcy.BeanB"/>
-	<bean id = "beanA" class = "com.nsb.practice.cyclicdependcy.BeanA">
-		<constructor-arg ref = "beanB"/>
-	</bean>
-	<bean id = "beanInitA" class = "com.nsb.practice.cyclicdependcy.BeanInitA" init-method="initMethod"/>
 	
+	<bean id = "beanB" class = "com.nsb.practice.spring.cyclicdependcy.BeanB"/>
+	<bean id = "beanA" class = "com.nsb.practice.spring.cyclicdependcy.BeanA">
+        <constructor-arg ref = "beanB"/>
+    </bean>
 </beans>

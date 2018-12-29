@@ -6,7 +6,7 @@ public class BeanA {
 	private BeanB beanB;
 
 	public void getValue() {
-		System.out.println("the field od beanA: " + beanB);
+		System.out.println("the beanB field od beanA: " + beanB);
 	}
 
 	public BeanA(BeanB beanB) {

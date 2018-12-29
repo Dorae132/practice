@@ -8,10 +8,15 @@ public class BeanB {
 	private BeanA beanA;
 	
 	public void getValue() {
-		System.out.println("the field of beanB: " + beanA);
+		System.out.println("the beanA field of beanB: " + beanA);
 	}
 	
-	@Override
+//	public BeanB(BeanA beanA) {
+//        super();
+//        this.beanA = beanA;
+//    }
+
+    @Override
 	public String toString() {
 		return "beanB";
 	}
