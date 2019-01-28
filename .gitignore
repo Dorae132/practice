@@ -10,3 +10,7 @@ test-output/
 log/
 Test*.java
 PdfService.java
+node_modules/
+package.json
+package-lock.json
+*.hprof

@@ -23,6 +23,7 @@ public class Application {
 	@RequestMapping("/test")
 	public String test(@RequestParam("value") String value) {
 		LOGGER.info(value + value.length());
+		System.out.println(Thread.currentThread().getContextClassLoader());
 		return "success";
 	}
 }

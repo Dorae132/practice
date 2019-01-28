@@ -19,6 +19,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>, I
 	
 	private AtomicBoolean flag = new AtomicBoolean(false);
 	
+	private ApplicationContext context;
+	
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		if (!flag.compareAndSet(false, true)) {
@@ -33,11 +35,11 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>, I
 		System.out.println("######################initializing test bean");
 		String value = testValue.getValue();
 		System.out.println("##################the testValue is " + value);
-		
 	}
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         System.out.println("###################context aware");
+        this.context = applicationContext;
     }
 }
