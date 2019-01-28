@@ -2,6 +2,7 @@ package com.nsb.practice.jvm.override;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 
@@ -29,19 +30,23 @@ public class GrandFatherInvoke {
         void thinking() {
             try {
                 // 1.7
-                MethodType mt = MethodType.methodType(void.class);
-                MethodHandle mh = MethodHandles.lookup().findSpecial(GrandFather.class, "thinking", mt, Son.class);
-                mh.invoke(this);
+//                MethodType mt1 = MethodType.methodType(void.class);
+//                MethodHandle mh = MethodHandles.lookup().findSpecial(GrandFather.class, "thinking", mt1, Son.class);
+//                mh.invoke(this);
 
                 // 1.8
-//                 MethodType mt = MethodType.methodType(void.class);
-//                 Field IMPL_LOOKUP =
-//                 MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
-//                 IMPL_LOOKUP.setAccessible(true);
-//                 MethodHandles.Lookup lkp = (MethodHandles.Lookup) IMPL_LOOKUP.get(null);
-//                 MethodHandle h1 = lkp.findSpecial(GrandFather.class, "thinking", mt,
-//                 GrandFather.class);
-//                 h1.invoke(this);
+//                MethodType mt = MethodType.methodType(void.class);
+//                Field IMPL_LOOKUP = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+//                IMPL_LOOKUP.setAccessible(true);
+//                MethodHandles.Lookup lkp = (MethodHandles.Lookup) IMPL_LOOKUP.get(null);
+//                MethodHandle h1 = lkp.findSpecial(GrandFather.class, "thinking", mt, GrandFather.class);
+//                h1.invoke(this);
+                MethodType mt2 = MethodType.methodType(void.class);
+                Field IMPL_LOOKUP = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+                IMPL_LOOKUP.setAccessible(true);
+                MethodHandles.Lookup lookup = (Lookup) IMPL_LOOKUP.get(null);
+                MethodHandle mh2 = lookup.findSpecial(GrandFather.class, "thinking", mt2, GrandFather.class);
+                mh2.invoke(this);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
