@@ -6,6 +6,7 @@ import java.util.function.IntSupplier;
 
 import com.google.common.collect.Lists;
 
+
 /**
  * error case test for stream <br>
  * need to be resloved <br>
@@ -15,58 +16,46 @@ import com.google.common.collect.Lists;
  */
 public class ErrorCase {
 
-    private static int getInt(final IntSupplier i) {
-        return i.getAsInt();
+    private static int getInt(final MyInterface1 i) {
+        return i.getValue1();
     }
 
-    private static <T extends Number & IntSupplier> OptionalInt findMinValue(final Collection<T> values) {
-        return values.stream().mapToInt(ErrorCase::getInt).min();
+    /**
+     * 这里对于方法引用而言，因为没有为lambda生成静态方法以及匿名内部类，所以将会导致
+     * implMethod与实例method不符的情况发生，如果此时有符合类型， 那么将会导致类型无法推断。运行时error
+     * @param values
+     * @return
+     */
+    private static <T extends MyInterface2 & MyInterface1> OptionalInt findMinValue(final Collection<T> values) {
+//        return values.stream().mapToInt(e -> ErrorCase.getInt(e)).min();
+        return values.stream().mapToInt(e -> ErrorCase.getInt(e)).min();
     }
 
     public static void main(String[] args) {
-        // doraeTODO need to be resloved, the type inference error.
-        Collection<MyInteger> list = Lists.newArrayList(new MyInteger(1), new MyInteger(2));
-        ErrorCase.findMinValue(list);
+        Collection<MyInteger> list = Lists.newArrayList(new MyInteger(), new MyInteger());
+        System.out.println(ErrorCase.findMinValue(list));
     }
     
-    static class MyInteger extends Number implements IntSupplier {
+    static interface MyInterface1 {
 
-        private int value;
-        
-        public MyInteger(int value) {
-            super();
-            this.value = value;
+        public int getValue1();
+    }
+    
+    static interface MyInterface2 {
+        public int getValue2();
+    }
+    
+    static class MyInteger implements MyInterface1, MyInterface2 {
+
+        @Override
+        public int getValue2() {
+            return 2;
         }
 
         @Override
-        public int getAsInt() {
-            return value;
-        }
-
-        @Override
-        public int intValue() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        @Override
-        public long longValue() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        @Override
-        public float floatValue() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        @Override
-        public double doubleValue() {
-            // TODO Auto-generated method stub
-            return 0;
+        public int getValue1() {
+            return 1;
         }
         
     }
 }
-
