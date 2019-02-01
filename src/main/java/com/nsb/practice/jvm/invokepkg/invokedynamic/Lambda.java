@@ -10,9 +10,15 @@ public class Lambda {
     public void lambda(Func func) {
         return;
     }
+
     public static void main(String[] args) {
         Lambda lambda = new Lambda();
-        lambda.lambda(s -> {return true;});
-        lambda.lambda(s -> {return false;});
+        while (true) {
+            System.out.println("###");
+            lambda.lambda(s -> {
+                return true;
+            });
+        }
+        // lambda.lambda(s -> {return false;});
     }
 }

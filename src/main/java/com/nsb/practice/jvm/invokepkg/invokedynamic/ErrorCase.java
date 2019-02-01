@@ -27,8 +27,8 @@ public class ErrorCase {
      * @return
      */
     private static <T extends MyInterface2 & MyInterface1> OptionalInt findMinValue(final Collection<T> values) {
-//        return values.stream().mapToInt(e -> ErrorCase.getInt(e)).min();
-        return values.stream().mapToInt(ErrorCase :: getInt).min();
+        return values.stream().mapToInt(e -> ErrorCase.getInt(e)).min();
+//        return values.stream().mapToInt(ErrorCase :: getInt).min();
     }
 
     public static void main(String[] args) {

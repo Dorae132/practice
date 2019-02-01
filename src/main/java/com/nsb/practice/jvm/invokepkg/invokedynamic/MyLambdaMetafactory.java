@@ -25,7 +25,7 @@ public class MyLambdaMetafactory {
         Lookup lookup = MethodHandles.lookup();
         CallSite site = LambdaMetafactory.metafactory(lookup, "get", MethodType.methodType(Supplier.class, TestClass.class),
                 MethodType.methodType(Object.class), lookup.findVirtual(TestClass.class, "getTest", MethodType.methodType(String.class)),
-                null);
+                MethodType.methodType(String.class));
         MethodHandle target = site.getTarget();
         Supplier<String> getter = (Supplier<String>)target.invokeExact(obj);
         System.out.println(getter.get());
