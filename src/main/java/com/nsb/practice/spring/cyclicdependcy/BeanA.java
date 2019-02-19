@@ -14,7 +14,12 @@ public class BeanA {
 		this.beanB = beanB;
 	}
 
-	@Override
+	public BeanA() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+    @Override
 	public String toString() {
 		return "beanA";
 	}
