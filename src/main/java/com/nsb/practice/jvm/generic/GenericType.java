@@ -9,11 +9,11 @@ import java.util.List;
  */
 public class GenericType {
 
-    public static String myMethod(List<String> list) {
-        return "";
-    }
-    
-    public static int myMethod(List<Integer> list) {
-        return 0;
-    }
+//    public static String myMethod(List<String> list) {
+//        return "";
+//    }
+//    
+//    public static int myMethod(List<Integer> list) {
+//        return 0;
+//    }
 }
