@@ -26,6 +26,8 @@
 		<akka.version>2.4.16</akka.version>
 		<akka.transactor.version>2.3.16</akka.transactor.version>
 		<lombook.version>1.18.2</lombook.version>
+		<rocketmq.version>4.4.0</rocketmq.version>
+		<mybatis.starter.version>2.0.0</mybatis.starter.version>
 	</properties>
 
 	<dependencies>
@@ -249,6 +251,16 @@
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-transactor_2.11</artifactId>
 			<version>${akka.transactor.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.rocketmq</groupId>
+			<artifactId>rocketmq-client</artifactId>
+			<version>${rocketmq.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>${mybatis.starter.version}</version>
 		</dependency>
 	</dependencies>
 
