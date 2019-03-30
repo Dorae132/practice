@@ -10,6 +10,8 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * java原生nio
  * @author Dorae
@@ -17,7 +19,8 @@ import java.util.Set;
  */
 public class NioServer {
 
-	public static void main(String[] args) throws Exception {
+	@Autowired
+public static void main(String[] args) throws Exception {
 		Selector serverSelector = Selector.open();
 		Selector clientSelector = Selector.open();
 		new Thread(() -> {
@@ -58,7 +61,8 @@ public class NioServer {
 			try {
 				// monitor whether there is a connector that has data need to be processed.
 				while (true) {
-					if (clientSelector.select(1) > 0) {
+				    int count = clientSelector.select(1);
+					if (count > 0) {
 						Set<SelectionKey> set = clientSelector.selectedKeys();
 						Iterator<SelectionKey> iterator = set.iterator();
 						
@@ -71,7 +75,7 @@ public class NioServer {
 								byteBuffer.flip();
 								System.out.println(Charset.defaultCharset().newDecoder().decode(byteBuffer).toString());
 							} finally {
-								iterator.remove();
+//								iterator.remove();
 								key.interestOps(SelectionKey.OP_READ);
 							}
 						}

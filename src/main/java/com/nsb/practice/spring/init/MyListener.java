@@ -27,6 +27,7 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>, I
 			return;
 		}
 		System.out.println("################## get context refresh event!");
+		System.out.println(System.getProperty("nsb"));
 		testValue.setValue("updated value!");
 	}
 

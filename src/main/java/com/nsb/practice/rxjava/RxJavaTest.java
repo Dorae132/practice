@@ -62,13 +62,13 @@ public class RxJavaTest {
 			}
 		})
 //		.subscribeOn(newThread)
-		.subscribeOn(newThread)
+//		.subscribeOn(newThread)
 		.filter(e -> e.equals("nsb"))
 //		.map(e -> "MAP2: " + e)
 //		.subscribeOn(newThread)
 //		.subscribeOn(newThread)
 		.map(e -> "MAP3: " + e)
-		.observeOn(newThread)
+//		.observeOn(newThread)
 //		.observeOn(newThread)
 		.subscribe(new Observer<String>() {
 
