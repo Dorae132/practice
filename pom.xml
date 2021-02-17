@@ -22,7 +22,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
 		<rxjava.version>2.2.2</rxjava.version>
-		<akka.version>2.4.16</akka.version>
+		<akka.version>2.5.30</akka.version>
 		<akka.transactor.version>2.3.16</akka.transactor.version>
 		<lombook.version>1.18.2</lombook.version>
 		<rocketmq.version>4.4.0</rocketmq.version>
